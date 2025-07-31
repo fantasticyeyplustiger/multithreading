@@ -1,5 +1,7 @@
 public class OneResourceGenerator extends PowerGenerator{
 
+    String fuelNeeded;
+
     @Override
     void burnFuel() {
 

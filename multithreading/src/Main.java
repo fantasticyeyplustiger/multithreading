@@ -14,6 +14,10 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Stopwatch stopwatch = new Stopwatch();
+
+        stopwatch.start();
+
         Random random = new Random();
 
         //region Initialize resources
@@ -21,7 +25,7 @@ public class Main {
         resources.put("Water", random.nextDouble(50.0, 3000.0));
         resources.put("Coal", random.nextDouble(0.0, 1000.0));
         resources.put("Fuel", random.nextDouble(0.0, 1000.0));
-        resources.put("Uranium", random.nextDouble(0.0, 500));
+        resources.put("Uranium", random.nextDouble(0.0, 500.0));
 
         int maxUnitsOfSpace = random.nextInt(50, 300);
         int overclockItems = random.nextInt(10, 100);
@@ -36,7 +40,7 @@ public class Main {
         System.out.printf("Overclock items: %d\n", overclockItems);
         //endregion
 
-
-
+        stopwatch.stop();
+        stopwatch.printElapsedMilliseconds();
     }
 }

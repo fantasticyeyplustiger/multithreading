@@ -4,6 +4,8 @@ public abstract class PowerGenerator {
 
     static double totalFuelBeingBurnt = 0.0;
 
+    String fuelType;
+
     // In minutes.
     double defaultBurnTime;
     double defaultPowerGeneration; // In megawatts.
