@@ -17,7 +17,7 @@ public abstract class PowerGenerator {
 
     int unitsOfSpace;
 
-    boolean isRunning = false;
+    boolean isRunning = true;
 
     PowerGenerator(){}
 

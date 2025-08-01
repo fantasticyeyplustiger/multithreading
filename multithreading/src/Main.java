@@ -1,5 +1,7 @@
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Random;
+import java.util.Arrays;
 
 // Goal: From randomly generated resources, attempt to calculate the most efficient power grid.
 // Print the amount of time it takes to calculate.
@@ -23,15 +25,26 @@ public class Main {
         Random random = new Random();
 
         //region Initialize resources
-        resources.put("Biomass", random.nextDouble(50.0, 3000.0));
-        resources.put("Water", random.nextDouble(50.0, 3000.0));
-        resources.put("Coal", random.nextDouble(0.0, 1000.0));
-        resources.put("Fuel", random.nextDouble(0.0, 1000.0));
-        resources.put("Uranium", random.nextDouble(0.0, 500.0));
+        resources.put("Biomass", random.nextDouble(50.0, 3000000.0));
+        resources.put("Water", random.nextDouble(50.0, 3000000.0));
+        resources.put("Coal", random.nextDouble(0.0, 1000000.0));
+        resources.put("Fuel", random.nextDouble(0.0, 1000000.0));
+        resources.put("Uranium", random.nextDouble(0.0, 500000.0));
 
-        maxUnitsOfSpace = random.nextInt(50, 300);
+        maxUnitsOfSpace = random.nextInt(499999, 500000);
 
-        int overclockItems = random.nextInt(10, 100);
+        int overclockItems = random.nextInt(10, 50);
+
+        // Assign static variables
+        NuclearGenerator.totalFuelAvailable = resources.get("Uranium");
+        NuclearGenerator.otherTotalFuelAvailable = resources.get("Water");
+
+        FuelGenerator.totalFuelAvailable = resources.get("Fuel");
+
+        CoalGenerator.totalFuelAvailable = resources.get("Coal");
+        CoalGenerator.otherTotalFuelAvailable = resources.get("Water");
+
+        BiomassGenerator.totalFuelAvailable = resources.get("Biomass");
 
         System.out.println("RESOURCES:\n");
 
@@ -41,12 +54,53 @@ public class Main {
 
         System.out.printf("Max units of space: %d\n", maxUnitsOfSpace);
         System.out.printf("Overclock items: %d\n", overclockItems);
+        System.out.println();
         //endregion
 
+        //region Initialize generators
+        // Higher power generation = Higher priority
+        int numOfNuclearGens = getTwoResourceGenerators(new NuclearGenerator(), resources.get("Biomass"), resources.get("Water"));
+        int numOfFuelGens = getOneResourceGenerators(new FuelGenerator(), resources.get("Fuel"));
+        int numOfCoalGens = getTwoResourceGenerators(new CoalGenerator(), resources.get("Coal"), resources.get("Water"));
+        int numOfBiomassGens = getOneResourceGenerators(new BiomassGenerator(), resources.get("Biomass"));
 
+        NuclearGenerator[] nuclearGenerators = NuclearGenerator.getGenerators(numOfNuclearGens);
+        FuelGenerator[] fuelGenerators = FuelGenerator.getGenerators(numOfFuelGens);
+        CoalGenerator[] coalGenerators = CoalGenerator.getGenerators(numOfCoalGens);
+        BiomassGenerator[] biomassGenerators = BiomassGenerator.getGenerators(numOfBiomassGens);
 
-        stopwatch.stop();
+        LinkedList<PowerGenerator> allGeneratorsList = new LinkedList<>();
+        PowerGenerator[] allGenerators = new PowerGenerator[numOfBiomassGens + numOfCoalGens + numOfFuelGens + numOfNuclearGens];
+
+        addArrayToGeneratorList(allGeneratorsList, nuclearGenerators);
+        addArrayToGeneratorList(allGeneratorsList, fuelGenerators);
+        addArrayToGeneratorList(allGeneratorsList, coalGenerators);
+        addArrayToGeneratorList(allGeneratorsList, biomassGenerators);
+
+        for (int i = 0; i < allGeneratorsList.size(); i++) {
+            allGenerators[i] = allGeneratorsList.get(i);
+        }
+        //endregion
+
+        GeneratorThread genThreadOne = new GeneratorThread(nuclearGenerators);
+        GeneratorThread genThreadTwo = new GeneratorThread(fuelGenerators);
+        GeneratorThread genThreadThree = new GeneratorThread(coalGenerators);
+        GeneratorThread genThreadFour = new GeneratorThread(biomassGenerators);
+        GeneratorThread allGensThread = new GeneratorThread(allGenerators);
+
+        /*
+        genThreadOne.startThread();
+        genThreadTwo.startThread();
+        genThreadThree.startThread();
+        genThreadFour.startThread();
+         */
+
+        // This thread has the work of the four above.
+        // Used to see the difference in time between single threaded and multithreaded.
+        allGensThread.startThread();
+
         stopwatch.printElapsedMilliseconds();
+        System.out.println();
     }
 
     /**
@@ -54,7 +108,7 @@ public class Main {
      * @param generatorType The type of generator, i.e. BiomassGenerator or FuelGenerator.
      * @param resource The amount of resource the generator uses.
      */
-    public static int calculateOneResourceGenerators(OneResourceGenerator generatorType, double resource){
+    public static int getOneResourceGenerators(OneResourceGenerator generatorType, double resource){
         int generatorSpace = generatorType.unitsOfSpace;
         int maxUsage = getMaxUsageForResource(resource, generatorType.fuelUsagePerBurnTime);
 
@@ -65,6 +119,8 @@ public class Main {
             maxPotentialGeneratorsSpace -= generatorSpace;
         }
 
+        maxUnitsOfSpace -= maxPotentialGeneratorsSpace;
+
         return maxUsage;
     }
 
@@ -74,7 +130,7 @@ public class Main {
      * @param resourceOne The first amount of resource the generator uses.
      * @param resourceTwo The second amount of resource the generator uses.
      */
-    public static int calculateTwoResourceGenerators(TwoResourceGenerator generatorType, double resourceOne, double resourceTwo){
+    public static int getTwoResourceGenerators(TwoResourceGenerator generatorType, double resourceOne, double resourceTwo){
         int generatorSpace = generatorType.unitsOfSpace;
 
         int maxUsageOne = getMaxUsageForResource(resourceOne, generatorType.fuelUsagePerBurnTime);
@@ -89,6 +145,8 @@ public class Main {
             maxPotentialGeneratorsSpace -= generatorSpace;
         }
 
+        maxUnitsOfSpace -= maxPotentialGeneratorsSpace;
+
         return maxUsage;
     }
 
@@ -100,5 +158,9 @@ public class Main {
      */
     public static int getMaxUsageForResource(double amountOfResources, double resourceRequirement){
         return (int) (amountOfResources / resourceRequirement);
+    }
+
+    public static void addArrayToGeneratorList(LinkedList<PowerGenerator> generators, PowerGenerator[] addingGenerators){
+        generators.addAll(Arrays.asList(addingGenerators));
     }
 }

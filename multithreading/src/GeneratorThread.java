@@ -5,12 +5,19 @@ public class GeneratorThread implements Runnable{
     private Thread loopThread;
     private boolean isRunning = false;
 
-    ArrayList<PowerGenerator> powerGenerators = new ArrayList<>();
+    PowerGenerator[] powerGenerators;
+
+    Stopwatch stopwatch = new Stopwatch();
+
+    GeneratorThread(PowerGenerator[] powerGenerators){
+        this.powerGenerators = powerGenerators;
+    }
 
     /**
      * Starts the thread's physics loop.
      */
     public synchronized void startThread(){
+        stopwatch.start();
         isRunning = true;
         loopThread = new Thread(this, "LoopThread");
         loopThread.start();
@@ -70,9 +77,26 @@ public class GeneratorThread implements Runnable{
             }
         }
 
+        calculateFibonacci(powerGenerators.length * 25);
+
         if (allGensNotRunning){
-            System.out.println("Generator Thread stopped!");
+            System.out.println(powerGenerators.getClass().getCanonicalName() + " Thread stopped! ");
+            stopwatch.stop();
+            stopwatch.printElapsedMilliseconds();
+            System.out.println("Amount of gens: " + powerGenerators.length);
+            System.out.println();
             stopThread();
+        }
+    }
+
+    private void calculateFibonacci(int n){
+        long firstTerm = 0;
+        long secondTerm = 1;
+
+        for (int i = 0; i < n; i++) {
+            long nextTerm = firstTerm + secondTerm;
+            firstTerm = secondTerm;
+            secondTerm = nextTerm;
         }
     }
 }

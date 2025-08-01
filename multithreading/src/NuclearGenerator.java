@@ -10,4 +10,20 @@ public class NuclearGenerator extends TwoResourceGenerator {
         this.otherFuelType = "Water";
         NuclearGenerator.totalFuelBeingBurnt += fuelUsagePerBurnTime;
     }
+
+    /**
+     * Gets Nuclear Generators and stores them in an array.
+     * @param amount The amount of Nuclear Generators in the array.
+     * @return The array with all the Nuclear Generators.
+     */
+    public static NuclearGenerator[] getGenerators(int amount) {
+
+        NuclearGenerator[] generators = new NuclearGenerator[amount];
+
+        for (int i = 0; i < amount; i++) {
+            generators[i] = new NuclearGenerator();
+        }
+
+        return generators;
+    }
 }
