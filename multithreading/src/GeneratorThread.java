@@ -2,38 +2,19 @@ import java.util.ArrayList;
 
 public class GeneratorThread implements Runnable{
 
-    private Thread loopThread;
+    private final Stopwatch stopwatch = new Stopwatch();
+
     private boolean isRunning = false;
 
     PowerGenerator[] powerGenerators;
 
-    Stopwatch stopwatch = new Stopwatch();
-
+    /**
+     * Runs a physics loop that 'ticks' 60 times per second.
+     * Burns all the fuel in its generators when available and simulates other work per generator.
+     * @param powerGenerators The generators that are burning fuel.
+     */
     GeneratorThread(PowerGenerator[] powerGenerators){
         this.powerGenerators = powerGenerators;
-    }
-
-    /**
-     * Starts the thread's physics loop.
-     */
-    public synchronized void startThread(){
-        stopwatch.start();
-        isRunning = true;
-        loopThread = new Thread(this, "LoopThread");
-        loopThread.start();
-    }
-
-    /**
-     * Stops the thread entirely.
-     */
-    public synchronized void stopThread() {
-        isRunning = false;
-        try {
-            loopThread.join(); // Waits for the thread to finish
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            System.out.println("--- Thread was interrupted! ---");
-        }
     }
 
     /**
@@ -41,12 +22,15 @@ public class GeneratorThread implements Runnable{
      */
     @Override
     public void run() {
+        stopwatch.start();
 
         final double frames = 60.0;
         final double framesPerSecond = 1_000_000_000 / frames;
 
         long lastTime = System.nanoTime();
         double delta = 0.0;
+
+        isRunning = true;
 
         while (isRunning){
             long currentTime = System.nanoTime();
@@ -58,7 +42,7 @@ public class GeneratorThread implements Runnable{
             calculateFibonacci(150);
 
             // Updates generators 'frames' times per second.
-            while (delta >= 1){
+            while (delta >= 1 && isRunning){
                 updateAllGenerators(delta);
                 delta--;
             }
@@ -101,12 +85,12 @@ public class GeneratorThread implements Runnable{
                     "Amount of gens: " + powerGenerators.length + ", " +
                     powerGenerators.getClass().getCanonicalName() + "'s Total Power: " + power + "\n");
 
-            stopThread();
+            isRunning = false;
         }
     }
 
     /**
-     * Literally just calculates the Fibonacci Sequence.
+     * Literally just calculates the nth term of the Fibonacci Sequence.
      * @param n The nth term being calculated.
      */
     private void calculateFibonacci(int n){

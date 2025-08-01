@@ -105,12 +105,6 @@ public class Main {
         }
         //endregion
 
-        GeneratorThread genThreadOne = new GeneratorThread(nuclearGenerators);
-        GeneratorThread genThreadTwo = new GeneratorThread(fuelGenerators);
-        GeneratorThread genThreadThree = new GeneratorThread(coalGenerators);
-        GeneratorThread genThreadFour = new GeneratorThread(biomassGenerators);
-        GeneratorThread allGensThread = new GeneratorThread(allGenerators);
-
         System.out.print("Start up time: ");
         stopwatch.stop();
         stopwatch.printElapsedMilliseconds();
@@ -128,14 +122,19 @@ public class Main {
 
         switch (input){
             case "1" -> {
-                genThreadOne.startThread();
-                genThreadTwo.startThread();
-                genThreadThree.startThread();
-                genThreadFour.startThread();
+                Thread threadOne = new Thread(new GeneratorThread(nuclearGenerators));
+                Thread threadTwo = new Thread(new GeneratorThread(fuelGenerators));
+                Thread threadThree = new Thread(new GeneratorThread(coalGenerators));
+                Thread threadFour = new Thread(new GeneratorThread(biomassGenerators));
+
+                threadOne.start(); threadTwo.start(); threadThree.start(); threadFour.start();
             }
             // This thread has the work of the four above combined.
             // Used to see the difference in time between single threaded and multithreaded.
-            case "2" -> allGensThread.startThread();
+            case "2" -> {
+                Thread allGensThread = new Thread(new GeneratorThread(allGenerators));
+
+                allGensThread.start();}
         }
 
         scan.close();
