@@ -25,6 +25,8 @@ public class Main {
         Random random = new Random();
 
         //region Initialize resources
+        /*
+        OLD CODE
         resources.put("Biomass", random.nextDouble(50.0, 3000000.0));
         resources.put("Water", random.nextDouble(50.0, 3000000.0));
         resources.put("Coal", random.nextDouble(0.0, 1000000.0));
@@ -32,6 +34,15 @@ public class Main {
         resources.put("Uranium", random.nextDouble(0.0, 500000.0));
 
         maxUnitsOfSpace = random.nextInt(499999, 500000);
+         */
+
+        resources.put("Biomass", 3000000.0);
+        resources.put("Water", 3000000.0);
+        resources.put("Coal", 1000000.0);
+        resources.put("Fuel", 1000000.0);
+        resources.put("Uranium", 500000.0);
+
+        maxUnitsOfSpace = 500000;
 
         int overclockItems = random.nextInt(10, 50);
 
