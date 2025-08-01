@@ -5,7 +5,7 @@ public class FuelGenerator extends OneResourceGenerator {
         this.defaultPowerGeneration = 450;
         this.unitsOfSpace = 12;
         this.fuelUsagePerBurnTime = 20;
-        this.fuelType = "Biomass";
-        BiomassGenerator.totalFuelBeingBurnt += 5;
+        this.fuelType = "Fuel";
+        FuelGenerator.totalFuelBeingBurnt += fuelUsagePerBurnTime;
     }
 }
