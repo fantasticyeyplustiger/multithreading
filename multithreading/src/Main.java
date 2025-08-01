@@ -1,20 +1,31 @@
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.Arrays;
+import java.util.*;
 
-// Goal: From randomly generated resources, attempt to calculate the most efficient power grid.
-// Print the amount of time it takes to calculate.
-// Then, run a thread that burns every single generator's fuel until it runs out.
-// While that happens, have a thread calculate fibonacci n45 repeatedly and count the amount of times n45 is reached
-// While that also happens, have a thread calculate fibonacci n30 repeatedly and count the amount of times n35 is reached
-// Finally, when the last generator's fuel runs out, stop all 3 threads and print both n45 and n35 results.
+/**
+    Intention:
+    Demonstrate ability to make and use single and multithreaded code
+
+    Summary:
+    Given a specific amount of resources and space, calculate the maximum amount of power
+    that can be achieved with fuel generators: then, have all the fuel generators burn
+    their type of fuel accordingly. Then, print results.
+
+    As a side note, a bunch of fibonacci calculations are run every time it attempts
+    to burn fuel. This is just to increase work overload.
+
+    Single threaded demo:
+    One thread burns all the fuel in every single generator.
+
+    Multithreaded demo:
+    Four threads burn the fuel in each type of generator accordingly.
+ */
 
 public class Main {
 
     static HashMap<String, Double> resources = new HashMap<>();
 
     static int maxUnitsOfSpace;
+
+    static Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {
 
@@ -26,7 +37,7 @@ public class Main {
 
         //region Initialize resources
         /*
-        OLD CODE
+        OLD CODE for randomizing resources
         resources.put("Biomass", random.nextDouble(50.0, 3000000.0));
         resources.put("Water", random.nextDouble(50.0, 3000000.0));
         resources.put("Coal", random.nextDouble(0.0, 1000000.0));
@@ -37,12 +48,12 @@ public class Main {
          */
 
         resources.put("Biomass", 3000000.0);
-        resources.put("Water", 3000000.0);
-        resources.put("Coal", 1000000.0);
-        resources.put("Fuel", 1000000.0);
-        resources.put("Uranium", 500000.0);
+        resources.put("Water", 300000.0);
+        resources.put("Coal", 10000.0);
+        resources.put("Fuel", 10000.0);
+        resources.put("Uranium", 5000.0);
 
-        maxUnitsOfSpace = 500000;
+        maxUnitsOfSpace = 75000;
 
         int overclockItems = random.nextInt(10, 50);
 
@@ -57,6 +68,7 @@ public class Main {
 
         BiomassGenerator.totalFuelAvailable = resources.get("Biomass");
 
+        // Print all the resources in a readable format
         System.out.println("RESOURCES:\n");
 
         for (String resource : resources.keySet()) {
@@ -99,19 +111,34 @@ public class Main {
         GeneratorThread genThreadFour = new GeneratorThread(biomassGenerators);
         GeneratorThread allGensThread = new GeneratorThread(allGenerators);
 
-        /*
-        genThreadOne.startThread();
-        genThreadTwo.startThread();
-        genThreadThree.startThread();
-        genThreadFour.startThread();
-         */
-
-        // This thread has the work of the four above.
-        // Used to see the difference in time between single threaded and multithreaded.
-        allGensThread.startThread();
-
+        System.out.print("Start up time: ");
+        stopwatch.stop();
         stopwatch.printElapsedMilliseconds();
-        System.out.println();
+
+        System.out.println("\nMultithreaded Demo [1] or Single thread Demo [2]");
+
+        String input = "0";
+
+        while(!input.equals("1") && !input.equals("2")){
+            System.out.println("Type 1 or 2!");
+            input = scan.nextLine();
+        }
+
+        System.out.println("\nNote: This will take a few seconds");
+
+        switch (input){
+            case "1" -> {
+                genThreadOne.startThread();
+                genThreadTwo.startThread();
+                genThreadThree.startThread();
+                genThreadFour.startThread();
+            }
+            // This thread has the work of the four above combined.
+            // Used to see the difference in time between single threaded and multithreaded.
+            case "2" -> allGensThread.startThread();
+        }
+
+        scan.close();
     }
 
     /**

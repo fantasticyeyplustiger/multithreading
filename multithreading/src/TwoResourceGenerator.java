@@ -1,7 +1,7 @@
 public class TwoResourceGenerator extends PowerGenerator {
 
     static double otherTotalFuelAvailable = 0.0;
-    static double otherFuelUsagePerBurnTime = 0.0;
+    double otherFuelUsagePerBurnTime = 0.0;
 
     String otherFuelType;
 

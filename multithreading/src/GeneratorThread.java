@@ -54,11 +54,15 @@ public class GeneratorThread implements Runnable{
             delta += (currentTime - lastTime) / framesPerSecond;
             lastTime = currentTime;
 
+            // Simulate work
+            calculateFibonacci(150);
+
             // Updates generators 'frames' times per second.
             while (delta >= 1){
                 updateAllGenerators(delta);
                 delta--;
             }
+
         }
     }
 
@@ -77,18 +81,34 @@ public class GeneratorThread implements Runnable{
             }
         }
 
-        calculateFibonacci(powerGenerators.length * 25);
+        // Simulate other activities for the amount of power generators there are
+        for (int i = 0; i < powerGenerators.length * 5000; i++) {
+            calculateFibonacci(100);
+        }
 
         if (allGensNotRunning){
-            System.out.println(powerGenerators.getClass().getCanonicalName() + " Thread stopped! ");
             stopwatch.stop();
+
+            double power = 0.0;
+            for (PowerGenerator generator : powerGenerators){
+                power += generator.getTotalPower();
+            }
+
             stopwatch.printElapsedMilliseconds();
-            System.out.println("Amount of gens: " + powerGenerators.length);
-            System.out.println();
+
+            // All in one print statement because I don't want to deal with synchronizing all the threads yet
+            System.out.println(powerGenerators.getClass().getCanonicalName() + " Thread stopped!\n" +
+                    "Amount of gens: " + powerGenerators.length + ", " +
+                    powerGenerators.getClass().getCanonicalName() + "'s Total Power: " + power + "\n");
+
             stopThread();
         }
     }
 
+    /**
+     * Literally just calculates the Fibonacci Sequence.
+     * @param n The nth term being calculated.
+     */
     private void calculateFibonacci(int n){
         long firstTerm = 0;
         long secondTerm = 1;

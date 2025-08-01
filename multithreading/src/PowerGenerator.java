@@ -27,7 +27,7 @@ public abstract class PowerGenerator {
     abstract void burnFuel(double delta);
 
     /**
-     * @return How many megawatts of power it makes when on. If it isn't running, returns zero.
+     * @return How many megawatts of power it makes when on.
      */
     public double getTotalPower(){
         return defaultPowerGeneration * overclockSpeed;

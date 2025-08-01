@@ -2,8 +2,8 @@ public class NuclearGenerator extends TwoResourceGenerator {
 
     NuclearGenerator(){
         this.defaultBurnTime = 5;
-        this.defaultPowerGeneration = 5000;
-        this.unitsOfSpace = 40;
+        this.defaultPowerGeneration = 4000;
+        this.unitsOfSpace = 20;
         this.fuelUsagePerBurnTime = 10;
         this.otherFuelUsagePerBurnTime = 150;
         this.fuelType = "Uranium";
