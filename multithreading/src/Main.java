@@ -12,6 +12,8 @@ public class Main {
 
     static HashMap<String, Double> resources = new HashMap<>();
 
+    static int maxUnitsOfSpace;
+
     public static void main(String[] args) {
 
         Stopwatch stopwatch = new Stopwatch();
@@ -27,7 +29,8 @@ public class Main {
         resources.put("Fuel", random.nextDouble(0.0, 1000.0));
         resources.put("Uranium", random.nextDouble(0.0, 500.0));
 
-        int maxUnitsOfSpace = random.nextInt(50, 300);
+        maxUnitsOfSpace = random.nextInt(50, 300);
+
         int overclockItems = random.nextInt(10, 100);
 
         System.out.println("RESOURCES:\n");
@@ -40,7 +43,62 @@ public class Main {
         System.out.printf("Overclock items: %d\n", overclockItems);
         //endregion
 
+
+
         stopwatch.stop();
         stopwatch.printElapsedMilliseconds();
+    }
+
+    /**
+     * Calculates the amount of OneResourceGenerators you can have with the given space and resources.
+     * @param generatorType The type of generator, i.e. BiomassGenerator or FuelGenerator.
+     * @param resource The amount of resource the generator uses.
+     */
+    public static int calculateOneResourceGenerators(OneResourceGenerator generatorType, double resource){
+        int generatorSpace = generatorType.unitsOfSpace;
+        int maxUsage = getMaxUsageForResource(resource, generatorType.fuelUsagePerBurnTime);
+
+        int maxPotentialGeneratorsSpace = maxUsage * generatorSpace;
+
+        while (maxUnitsOfSpace < maxPotentialGeneratorsSpace){
+            maxUsage--;
+            maxPotentialGeneratorsSpace -= generatorSpace;
+        }
+
+        return maxUsage;
+    }
+
+    /**
+     * Calculates the amount of TwoResourceGenerators you can have with the given space and resources.
+     * @param generatorType The type of generator, i.e. CoalGenerator or NuclearGenerator.
+     * @param resourceOne The first amount of resource the generator uses.
+     * @param resourceTwo The second amount of resource the generator uses.
+     */
+    public static int calculateTwoResourceGenerators(TwoResourceGenerator generatorType, double resourceOne, double resourceTwo){
+        int generatorSpace = generatorType.unitsOfSpace;
+
+        int maxUsageOne = getMaxUsageForResource(resourceOne, generatorType.fuelUsagePerBurnTime);
+        int maxUsageTwo = getMaxUsageForResource(resourceTwo, generatorType.otherFuelUsagePerBurnTime);
+
+        int maxUsage = Math.min(maxUsageOne, maxUsageTwo); // max usage cannot be higher than the other max usage
+
+        int maxPotentialGeneratorsSpace = maxUsage * generatorSpace;
+
+        while (maxUnitsOfSpace < maxPotentialGeneratorsSpace){
+            maxUsage--;
+            maxPotentialGeneratorsSpace -= generatorSpace;
+        }
+
+        return maxUsage;
+    }
+
+    /**
+     * Gets the maximum amount of generators you can use with the given resources. Ignores space requirements.
+     * @param amountOfResources The given resources.
+     * @param resourceRequirement The resources a single generator uses.
+     * @return The maximum amount of generators you can use with the given amountOfResources.
+     */
+    public static int getMaxUsageForResource(double amountOfResources, double resourceRequirement){
+        return (int) (amountOfResources / resourceRequirement);
     }
 }

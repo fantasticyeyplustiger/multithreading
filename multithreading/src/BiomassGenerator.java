@@ -8,5 +8,4 @@ public class BiomassGenerator extends OneResourceGenerator {
         this.fuelType = "Biomass";
         BiomassGenerator.totalFuelBeingBurnt += 5;
     }
-
 }

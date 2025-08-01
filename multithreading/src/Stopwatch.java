@@ -1,8 +1,8 @@
 public class Stopwatch {
 
     private long startTime = -1;
-    private boolean isRunning = false;
     private long elapsedNanoTime = -1;
+    private boolean isRunning = false;
 
     /**
      * Starts the stopwatch. Elapsed time begins to increase from this point.
@@ -18,11 +18,21 @@ public class Stopwatch {
     }
 
     /**
+     * Stops the stopwatch and starts it again.
+     * @throws RuntimeException If stopwatch hasn't already started.
+     */
+    public void restart(){
+        stop();
+        start();
+    }
+
+    /**
      * Calculates the elapsed time from starting time to current time in nanoseconds.
      * Doesn't calculate if the stopwatch isn't running.
      */
     private void calculateElapsedNanoTime(){
-        // If it isn't running,
+        // If it isn't running, don't calculate.
+        // stop() already calculates the last elapsed time.
         if (!isRunning){
             return;
         }
@@ -37,7 +47,7 @@ public class Stopwatch {
      */
     public void stop(){
         if (!isRunning){
-            throw new RuntimeException("Stopwatch is not running. Use start() before stopping!");
+            throw new RuntimeException("Stopwatch is not running. Use start() before stopping or restarting!");
         }
         calculateElapsedNanoTime();
         isRunning = false;
