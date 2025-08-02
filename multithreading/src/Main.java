@@ -87,18 +87,22 @@ public class Main {
         int numOfCoalGens = getTwoResourceGenerators(new CoalGenerator(), resources.get("Coal"), resources.get("Water"));
         int numOfBiomassGens = getOneResourceGenerators(new BiomassGenerator(), resources.get("Biomass"));
 
+        // Get all the generators in their corresponding arrays
         NuclearGenerator[] nuclearGenerators = NuclearGenerator.getGenerators(numOfNuclearGens);
         FuelGenerator[] fuelGenerators = FuelGenerator.getGenerators(numOfFuelGens);
         CoalGenerator[] coalGenerators = CoalGenerator.getGenerators(numOfCoalGens);
         BiomassGenerator[] biomassGenerators = BiomassGenerator.getGenerators(numOfBiomassGens);
 
+        // Put all the generators in another array for single threaded demo
         LinkedList<PowerGenerator> allGeneratorsList = new LinkedList<>();
-        PowerGenerator[] allGenerators = new PowerGenerator[numOfBiomassGens + numOfCoalGens + numOfFuelGens + numOfNuclearGens];
 
         addArrayToGeneratorList(allGeneratorsList, nuclearGenerators);
         addArrayToGeneratorList(allGeneratorsList, fuelGenerators);
         addArrayToGeneratorList(allGeneratorsList, coalGenerators);
         addArrayToGeneratorList(allGeneratorsList, biomassGenerators);
+
+        // Converts the allGeneratorsList to an array
+        PowerGenerator[] allGenerators = new PowerGenerator[numOfBiomassGens + numOfCoalGens + numOfFuelGens + numOfNuclearGens];
 
         for (int i = 0; i < allGeneratorsList.size(); i++) {
             allGenerators[i] = allGeneratorsList.get(i);
@@ -113,6 +117,7 @@ public class Main {
 
         String input = "0";
 
+        // Won't continue until user answers properly.
         while(!input.equals("1") && !input.equals("2")){
             System.out.println("Type 1 or 2!");
             input = scan.nextLine();
@@ -197,6 +202,11 @@ public class Main {
         return (int) (amountOfResources / resourceRequirement);
     }
 
+    /**
+     * Adds generators from an array to the given generator list.
+     * @param generators The generator list.
+     * @param addingGenerators All the generators being added to the generator list.
+     */
     public static void addArrayToGeneratorList(LinkedList<PowerGenerator> generators, PowerGenerator[] addingGenerators){
         generators.addAll(Arrays.asList(addingGenerators));
     }

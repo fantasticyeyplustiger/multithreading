@@ -11,7 +11,7 @@ public abstract class PowerGenerator {
     double defaultBurnTime;
     double defaultPowerGeneration; // In megawatts.
     double overclockSpeed = 1.0; // Numerical multiplier. Not a percentage. Probably not going to deal with it until final build.
-    double currentTime = 0.0;
+    double currentTime = 0.0; // How much time has passed during the process of burning fuel.
 
     double fuelUsagePerBurnTime;
 

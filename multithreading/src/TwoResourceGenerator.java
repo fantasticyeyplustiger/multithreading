@@ -12,6 +12,7 @@ public class TwoResourceGenerator extends PowerGenerator {
 
         currentTime += delta;
 
+        // Shouldn't burn fuel if fuel isn't done burning already.
         if (!(currentTime >= getBurnTime())) { return; }
 
         currentTime = 0.0;
